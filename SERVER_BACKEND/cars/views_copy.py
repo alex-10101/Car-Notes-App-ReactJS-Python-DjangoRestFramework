@@ -21,6 +21,19 @@ class CarListCreateApiView(APIView):
     permission_classes=[permissions.IsAuthenticated]
     # throttle_classes = [UserRateThrottle]
 
+    def car_contains_filter(self, filter, car):
+        """
+        Helper method to check if a car contains the given filter
+        """
+        contains_filter=False
+        filter_values = filter.split("-")
+        for filter_value in filter_values:
+            if filter_value in car.brand or filter_value in car.motor:
+                contains_filter=True
+                break
+        return contains_filter
+
+
     def get(self, request):
         """
         Get all the car notes for given requested user
@@ -30,35 +43,22 @@ class CarListCreateApiView(APIView):
             # Filtering based on query parameters
             filters = request.query_params
 
-            all_cars = Car.objects.filter(user = request.user).order_by("-createdAt")
+            all_cars_of_the_request_user = Car.objects.filter(user = request.user).order_by("-createdAt")
             filtered_cars = []
 
-            for car in all_cars:
+            for car in all_cars_of_the_request_user:
                 is_valid_filter = True
 
                 brand = filters.get('brand')
                 if brand:
-                    car_contains_brand = False
-                    brand_values = brand.split("-")
-                    for brand_value in brand_values:
-                        if car.brand == brand_value:
-                            car_contains_brand = True
-                            break
-                    is_valid_filter = is_valid_filter and car_contains_brand
+                    is_valid_filter = is_valid_filter and self.car_contains_filter(filter=brand, car=car)
                 
                 motor = filters.get('motor')
                 if motor:
-                    car_contains_motor = False
-                    motor_values = motor.split("-")
-                    for motor_value in motor_values:
-                        if motor_value in car.motor:
-                            car_contains_motor = True
-                            break
-                    is_valid_filter = is_valid_filter and car_contains_motor
-
+                    is_valid_filter = is_valid_filter and self.car_contains_filter(filter=motor, car=car)
+                
                 if is_valid_filter:
                     filtered_cars.append(car)
-
 
             serializer = CarSerializer(filtered_cars, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -203,6 +203,19 @@ class CarListCreateApiViewAdminPriviledge(APIView):
     permission_classes=[permissions.IsAuthenticated, permissions.IsAdminUser]
     # throttle_classes = [UserRateThrottle]
 
+    def car_contains_filter(self, filter, car):
+        """
+        Helper method to check if a car contains the given filter
+        """
+        contains_filter=False
+        filter_values = filter.split("-")
+        for filter_value in filter_values:
+            if filter_value in car.brand or filter_value in car.motor:
+                contains_filter=True
+                break
+        return contains_filter
+
+
     def get(self, request):
         """
         Get all car notes of all users.
@@ -220,26 +233,15 @@ class CarListCreateApiViewAdminPriviledge(APIView):
 
                 brand = filters.get('brand')
                 if brand:
-                    car_contains_brand = False
-                    brand_values = brand.split("-")
-                    for brand_value in brand_values:
-                        if car.brand == brand_value:
-                            car_contains_brand = True
-                            break
-                    is_valid_filter = is_valid_filter and car_contains_brand
+                    is_valid_filter = is_valid_filter and self.car_contains_filter(filter=brand, car=car)
                 
                 motor = filters.get('motor')
                 if motor:
-                    car_contains_motor = False
-                    motor_values = motor.split("-")
-                    for motor_value in motor_values:
-                        if motor_value in car.motor:
-                            car_contains_motor = True
-                            break
-                    is_valid_filter = is_valid_filter and car_contains_motor
-
+                    is_valid_filter = is_valid_filter and self.car_contains_filter(filter=motor, car=car)
+                
                 if is_valid_filter:
                     filtered_cars.append(car)
+
 
             serializer = CarSerializer(filtered_cars, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
