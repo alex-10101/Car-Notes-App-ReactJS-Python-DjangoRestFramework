@@ -1,13 +1,10 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { removeCredentials, setCredentials } from "../features/auth/authSlice";
-import { apiSlice } from "../app/api/apiSlice";
-import {
-  useCheckUserIsAuthenticatedMutation,
-  useLogoutUserMutation,
-} from "../features/auth/authApiSlice";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import Loading from "../components/Loading";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useCheckUserIsAuthenticatedMutation, useLogoutUserMutation } from "../../features/auth/authApiSlice";
+import { removeCredentials, setCredentials } from "../../features/auth/authSlice";
+import { apiSlice } from "../../app/api/apiSlice";
+import Loading from "../Loading";
 
 /**
  *

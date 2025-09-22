@@ -16,7 +16,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     registerUser: builder.mutation<
-      void,
+      string,
       {
         username: string;
         email: string;
@@ -29,6 +29,12 @@ export const authApiSlice = apiSlice.injectEndpoints({
         url: "/auth/register",
         method: "POST",
         body,
+      }),
+    }),
+    activateAccoumt: builder.mutation<string, { uid: string; token: string }>({
+      query: ({ uid, token }) => ({
+        url: `/auth/activate_account/${uid}/${token}`,
+        method: "POST",
       }),
     }),
     loginUser: builder.mutation<
@@ -60,16 +66,40 @@ export const authApiSlice = apiSlice.injectEndpoints({
         body,
       }),
     }),
-    changePassword: builder.mutation<
-      void,
+    // changeKnownPassword: builder.mutation<
+    //   void,
+    //   {
+    //     oldPassword: string;
+    //     newPassword: string;
+    //     newPasswordConfirm: string;
+    //   }
+    // >({
+    //   query: (body) => ({
+    //     url: "/auth/change_known_password",
+    //     method: "PUT",
+    //     body,
+    //   }),
+    // }),
+    requestChangeForgottenPassword: builder.mutation<string, { email: string }>(
       {
-        oldPassword: string;
+        query: (body) => ({
+          url: `/auth/request_change_known_password`,
+          method: "POST",
+          body,
+        }),
+      }
+    ),
+    confirmChangeForgottenPassword: builder.mutation<
+      string,
+      {
+        uid: string;
+        token: string;
         newPassword: string;
         newPasswordConfirm: string;
       }
     >({
       query: (body) => ({
-        url: "/auth/change_password",
+        url: `/auth/confirm_change_known_password/${body.uid}/${body.token}`,
         method: "PUT",
         body,
       }),
@@ -81,9 +111,12 @@ export const {
   useGetCSRFCookieMutation,
   useCheckUserIsAuthenticatedMutation,
   useRegisterUserMutation,
+  useActivateAccoumtMutation,
   useLoginUserMutation,
   useLogoutUserMutation,
   useLogoutUserAllDevicesMutation,
-  useChangePasswordMutation,
+  // useChangeKnownPasswordMutation, // not used anymore
+  useRequestChangeForgottenPasswordMutation,
+  useConfirmChangeForgottenPasswordMutation,
   useDeleteAccountMutation,
 } = authApiSlice;

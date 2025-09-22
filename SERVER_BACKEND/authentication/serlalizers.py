@@ -10,6 +10,30 @@ import requests
 
 User = get_user_model()
 
+class RecoverPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields=["email"]
+
+        # override the default error messages:
+        extra_kwargs = {
+            "email": {
+                "error_messages": {
+                    'required': 'Email is required.', 
+                    'null': 'Email is required.', 
+                    'invalid': 'Email is invalid.', 
+                    'blank': 'Email is required.', 
+                    'max_length': 'Email is too long.', 
+                    'min_length': 'Email is too short.'
+                }
+            },
+        }
+
+    def validate(self, data):
+        data=sanitize_user_input(data)
+        return data
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     # override the default error messages of the "confirm_password" field:
     custom_confirm_password_errors = {
@@ -203,12 +227,12 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         data=sanitize_user_input(data)
         
-        try: 
-            user_with_given_email = User.objects.get(email = data["email"])
-        except:
-            raise serializers.ValidationError({"email": "Email does not exist. Go to register page."})
-        if not user_with_given_email.check_password(raw_password=data["password"]):
-            raise serializers.ValidationError({"password": "Wrong password."})
+        # try: 
+        #     user_with_given_email = User.objects.get(email = data["email"])
+        # except:
+        #     raise serializers.ValidationError({"email": "Email does not exist. Go to register page."})
+        # if not user_with_given_email.check_password(raw_password=data["password"]):
+        #     raise serializers.ValidationError({"password": "Wrong password."})
         
         return data
     
@@ -293,6 +317,51 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError({"password": "New passwords do not match."})
 
         return data
+    
+class ResetPasswordSerializer(serializers.Serializer):
+    # override the default error messages of the ", "new_password", "new_password_confirm" fields:
+    custom_password_errors = {
+        "new_password": {
+            "error_messages": {
+                'required': 'New password is required.', 
+                'null': 'New password is required.', 
+                'invalid': 'New password is invalid.', 
+                'blank': 'New password is required.', 
+                'max_length': 'New password is too long.', 
+                'min_length': 'New password is too short.'
+            }
+        },
+        "new_password_confirm": {
+            "error_messages": {
+                'required': 'New password confirmation is required.', 
+                'null': 'New password confirmation is required.', 
+                'invalid': 'New password confirmation is invalid.', 
+                'blank': 'New password confirmation is required.', 
+                'max_length': 'New password confirmation is too long.', 
+                'min_length': 'New password confirmation is too short.'
+            }
+        },
+
+    }
+
+    new_password=serializers.CharField(error_messages = custom_password_errors["new_password"]["error_messages"])
+    new_password_confirm=serializers.CharField(error_messages = custom_password_errors["new_password_confirm"]["error_messages"])
+
+    def validate(self, data):
+        data=sanitize_user_input(data)
+
+        user = self.context["request"].user
+                
+        try:
+            validate_password(password=data["new_password"], user=user)
+        except ValidationError as err:
+            raise serializers.ValidationError({"password": err.messages})
+        
+        if data["new_password"] != data["new_password_confirm"]:
+            raise serializers.ValidationError({"password": "New passwords do not match."})
+
+        return data
+
 
 
 class UserSerializer(serializers.ModelSerializer):

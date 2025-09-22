@@ -7,6 +7,7 @@ import Row from "react-bootstrap/Row";
 import Loading from "../components/Loading";
 import FetchBaseError from "../components/FetchBaseError";
 import { useGetAllCarsQuery } from "../features/cars/carsApiSlice";
+// import { useGetAllCarsQuery } from "../features/cars/carsApiSliceV2";
 
 /**
  *

@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAppSelector } from "../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 
 /**
  * @returns A component that protects routes.

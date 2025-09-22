@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useAppDispatch } from "../app/hooks";
-import { removeCredentials } from "../features/auth/authSlice";
+import { useAppDispatch } from "../../app/hooks";
+import { removeCredentials } from "../../features/auth/authSlice";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
-import { apiSlice } from "../app/api/apiSlice";
-import FetchBaseError from "../components/FetchBaseError";
-import { useDeleteAccountMutation } from "../features/auth/authApiSlice";
+import { apiSlice } from "../../app/api/apiSlice";
+import FetchBaseError from "../../components/FetchBaseError";
+import { useDeleteAccountMutation } from "../../features/auth/authApiSlice";
 
 /**
  *

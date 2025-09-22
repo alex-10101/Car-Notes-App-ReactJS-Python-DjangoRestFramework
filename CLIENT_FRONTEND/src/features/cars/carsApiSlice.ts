@@ -4,11 +4,11 @@ import { apiSlice } from "../../app/api/apiSlice";
 // Define a service using a base URL and expected endpoints
 export const carsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getAllCars: builder.query<ICar[], number | string>({
+    getAllCars: builder.query<ICar[], string>({
       query: (url) => `/cars/${url}`,
       providesTags: ["cars"],
     }),
-    getAllCarsAdminPriviledge: builder.query<ICar[], number | string>({
+    getAllCarsAdminPriviledge: builder.query<ICar[], string>({
       query: (url) => `/cars/admin/${url}`,
       providesTags: ["cars"],
     }),

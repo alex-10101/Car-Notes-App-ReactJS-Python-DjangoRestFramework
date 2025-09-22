@@ -31,11 +31,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['SECRET_KEY']
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+
+# If gunicorn is installed (only works on Unix systems), run 
+# "python3 manage.py collectstatic" (to serves static files, which are used for Django Admin for example)
+# and "gunicorn car_notes_api.wsgi" to start gunicorn.
+# Else, run "python3 manage.py runserver"
+# (To test locally with DEBUG = False run: python3 manage.py runserver --insecure)
+
+DEBUG = False
+
+# IF DEBUG = False, we must add the allowed hosts (here we add localhost or 127.0.0.1 to run this server locally, on personal computer):
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+]
 
 # CORS Settings
 
@@ -54,6 +67,17 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://127.0.0.1:4173",
 ]
+
+# COOKIE SETTINGS
+# CSRF_COOKIE_SAMESITE = 'Strict'
+# SESSION_COOKIE_SAMESITE = 'Strict'
+# CSRF_COOKIE_HTTPONLY = False  
+# SESSION_COOKIE_HTTPONLY = True
+# CSRF_COOKIE_AGE = 60 # 1 min
+
+# For production
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 
 # Application definition
 
@@ -91,7 +115,7 @@ ROOT_URLCONF = 'car_notes_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"], # TELL DJANGO WHERE THE TEMPLATES ARE
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -167,6 +191,16 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_URL = 'media/' # to help access media files (even if debug=False). Url is used in social_media_app_api/settings.py.
+
+if DEBUG:
+    STATICFILES_DIRS = BASE_DIR / 'static'
+else:
+    STATIC_ROOT = BASE_DIR / 'static_production'
+
+# Actual directory files uploaded by the users go to
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -174,15 +208,88 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Some settings for throttling
 
-REST_FRAMEWORK = {
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle',
-        'rest_framework.throttling.ScopedRateThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/day',
-        'user': '1000/day',
-        'login': '6/hour'
-    }
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_THROTTLE_CLASSES': [
+#         'rest_framework.throttling.AnonRateThrottle',
+#         'rest_framework.throttling.UserRateThrottle',
+#         'rest_framework.throttling.ScopedRateThrottle',
+#     ],
+#     'DEFAULT_THROTTLE_RATES': {
+#         'anon': '100/day',
+#         'user': '1000/day',
+#         'login': '6/hour'
+#     },
+#     # "EXCEPTION_HANDLER": "utils.customExceptionHandler.custom_exception_handler"
+# }
+
+# EMAIL SETTINGS
+
+EMAIL_BACKEND = os.environ["EMAIL_BACKEND"] 
+EMAIL_HOST = os.environ["EMAIL_HOST"] # Use your email provider's SMTP server
+EMAIL_PORT = os.environ["EMAIL_PORT"]
+EMAIL_USE_TLS = os.environ["EMAIL_USE_TLS"]
+EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]  # Your email
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]  # Your email password
+EMAIL_FROM = os.environ["EMAIL_FROM"] 
+PASSWORD_RESET_TIMEOUT = 14400 # PASSWORD_RESET_TIMOUT sts how long the link sent to an email will be valid. Here it is 14400 seconds = 4hours.
+
+
+# CACHING SETTINGS (HERE REDIS CACHE) # https://django-redis-cache.readthedocs.io/en/latest/advanced_configuration.html#password
+
+
+# https://github.com/redis/redis/issues/13437
+# How to setup Redis password: 
+# 1. Open the Redis configuration file in your preferred text editor: 
+# sudo nano /etc/redis/redis.conf
+
+# 2. Find and set the requirepass directive:
+# # requirepass foobared
+# requirepass your_secret_password
+
+# 3. Save and close the file, then restart the Redis server:
+# sudo systemctl restart redis
+
+# 4. Authenticate with the Redis server:
+# redis-cli -h 127.0.0.1 -p 6379
+# 127.0.0.1:6379> auth your_secret_password
+# OK
+
+
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': 'redis://127.0.0.1:6379',  
+#         # 'OPTIONS': {
+#         #     'PASSWORD': os.environ["SECRET_KEY"],
+#         # },
+#     }
+# }
+
+# To start redis-server in Ubuntu type in terminal redis-server or service redis-server start. 
+# To stop press ctrl-c or service redis-server stop.
+
+# The cache backend (cache) stores session data only in your cache. 
+# This is faster because it avoids database persistence, 
+# but you will have to consider what happens when cache data is evicted. 
+# Eviction can occur if the cache fills up or the cache server is restarted, 
+# and it will mean session data is lost, including logging out users. 
+# To use this backend, set SESSION_ENGINE to "django.contrib.sessions.backends.cache".
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+# If you have multiple caches defined in CACHES, Django will use the default cache. 
+# To use another cache, set SESSION_CACHE_ALIAS to the name of that cache.
+# SESSION_CACHE_ALIAS = 'default' 
+
+# The cached database backend (cached_db) uses a write-through cache – 
+# session writes are applied to both the database and cache, in that order. 
+# If writing to the cache fails, the exception is handled and logged via the sessions logger, 
+# to avoid failing an otherwise successful write operation.
+# Session reads use the cache, or the database if the data has been evicted from the cache. 
+# To use this backend, set SESSION_ENGINE to "django.contrib.sessions.backends.cached_db", 
+# and follow the configuration instructions for the using database-backed sessions.
+
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
+# SESSION_CACHE_ALIAS = 'default'
+
+# Run python3 manage.py migrate !!!

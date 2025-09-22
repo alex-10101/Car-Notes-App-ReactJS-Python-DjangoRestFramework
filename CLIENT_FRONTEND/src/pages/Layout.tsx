@@ -4,7 +4,10 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { removeCredentials } from "../features/auth/authSlice";
 import { apiSlice } from "../app/api/apiSlice";
-import { useLogoutUserAllDevicesMutation, useLogoutUserMutation } from "../features/auth/authApiSlice";
+import {
+  useLogoutUserAllDevicesMutation,
+  useLogoutUserMutation,
+} from "../features/auth/authApiSlice";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { Button, Offcanvas } from "react-bootstrap";
@@ -67,7 +70,8 @@ function Layout() {
     e: React.MouseEvent<HTMLElement, MouseEvent>
   ) {
     e.preventDefault();
-    navigate("/changePassword");
+    // navigate("/changePassword");
+    navigate("/requestChangeForgottenPassword");
   }
 
   /**

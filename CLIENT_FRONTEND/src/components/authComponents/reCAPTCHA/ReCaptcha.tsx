@@ -42,7 +42,7 @@ function ReCaptcha() {
       // render the recaptcha widget (here a div with id "recaptcha")
       // @ts-ignore
       window.grecaptcha.render("recaptcha", {
-        sitekey: "6LfdphcqAAAAAHHNFY5ZO8At7DQTZTiBjcQWMZoc",
+        sitekey: "6LeJw9ArAAAAAKWncgGOQPXczV2uqYL70iSny6Fq",
       });
     }
   }, [recaptchaIsReady]);

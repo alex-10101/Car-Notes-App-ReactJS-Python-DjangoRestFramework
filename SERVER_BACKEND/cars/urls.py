@@ -1,6 +1,6 @@
 from django.urls import path
-# from .views  import CarListCreateApiView, CarDetailApiView, CarListCreateApiViewAdminPriviledge, CarDetailApiViewAdminPriviledge
-from .views_copy  import CarListCreateApiView, CarDetailApiView, CarListCreateApiViewAdminPriviledge, CarDetailApiViewAdminPriviledge
+from .views  import CarListCreateApiView, CarDetailApiView, CarListCreateApiViewAdminPriviledge, CarDetailApiViewAdminPriviledge
+# from .views_copy  import CarListCreateApiView, CarDetailApiView, CarListCreateApiViewAdminPriviledge, CarDetailApiViewAdminPriviledge
 
 
 

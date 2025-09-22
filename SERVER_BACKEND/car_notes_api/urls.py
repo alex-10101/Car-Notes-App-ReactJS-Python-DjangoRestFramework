@@ -23,3 +23,8 @@ urlpatterns = [
     path("api/cars/", include("cars.urls")),
     path("api/auth/", include("authentication.urls")),
 ]
+
+
+# When the server is running in production (Debug=False), use this handler500
+# to catch unexpected errors and send a message to the users.
+handler500 = "utils.customExceptionHandler.handle_500_error"

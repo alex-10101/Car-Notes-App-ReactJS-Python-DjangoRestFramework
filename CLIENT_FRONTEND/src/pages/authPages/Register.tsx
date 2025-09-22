@@ -6,14 +6,17 @@ import {
   useCheckUserIsAuthenticatedMutation,
   useLogoutUserMutation,
   useRegisterUserMutation,
-} from "../features/auth/authApiSlice";
+} from "../../features/auth/authApiSlice";
 import { useNavigate } from "react-router-dom";
-import FetchBaseError from "../components/FetchBaseError";
-import { removeCredentials, setCredentials } from "../features/auth/authSlice";
-import { useAppDispatch } from "../app/hooks";
-import Loading from "../components/Loading";
-import { apiSlice } from "../app/api/apiSlice";
-import ReCaptcha from "../reCAPTCHA/ReCaptcha";
+import FetchBaseError from "../../components/FetchBaseError";
+import {
+  removeCredentials,
+  setCredentials,
+} from "../../features/auth/authSlice";
+import { useAppDispatch } from "../../app/hooks";
+import Loading from "../../components/Loading";
+import { apiSlice } from "../../app/api/apiSlice";
+import ReCaptcha from "../../components/authComponents/reCAPTCHA/ReCaptcha";
 
 /**
  *
@@ -26,8 +29,8 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [register, { error }] = useRegisterUserMutation();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [register, { data, error, isLoading }] = useRegisterUserMutation();
+  const [__isLoading, setIsLoading] = useState<boolean>(true);
   const [checkUserIsAuthenticated] = useCheckUserIsAuthenticatedMutation();
   const [logout] = useLogoutUserMutation();
 
@@ -50,7 +53,8 @@ function Register() {
       confirmPassword,
       captchaValue,
     }).unwrap();
-    navigate("/login");
+    // navigate("/login"); // don't navigate to login page, 
+                           // instead wait for the response that an account activation email has been sent
   }
 
   // check when the component mounts if the user is authenticated. If yes redirect him to the home page.
@@ -80,7 +84,7 @@ function Register() {
     };
   }, []);
 
-  if (isLoading) {
+  if (__isLoading || isLoading) {
     return <Loading />;
   }
 
@@ -140,6 +144,8 @@ function Register() {
         </Form.Group>
 
         <ReCaptcha />
+
+        {data && <p style={{ color: "green", marginTop: "3px" }}>{data}</p>}
 
         {error && <FetchBaseError error={error} />}
 

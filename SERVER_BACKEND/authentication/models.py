@@ -9,6 +9,7 @@ class CustomUser(AbstractUser):
     and which should be used instead if Django's default User model.
     Extends the AbstractUser class with the given attributes.
     """    
-    email = models.EmailField(unique=True, blank=False, null=False, error_messages={
-        "unique": "A user with this email already exists."
-    })
+
+    # Account will be inactive until email is verified.
+    # If the account is inactive, the user cannot login.
+    is_active = models.BooleanField(default=False)  

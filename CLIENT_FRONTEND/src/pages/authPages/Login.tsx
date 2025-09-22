@@ -1,19 +1,22 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch } from "../../app/hooks";
 import {
   useCheckUserIsAuthenticatedMutation,
   useLoginUserMutation,
   useLogoutUserMutation,
-} from "../features/auth/authApiSlice";
-import { removeCredentials, setCredentials } from "../features/auth/authSlice";
+} from "../../features/auth/authApiSlice";
+import {
+  removeCredentials,
+  setCredentials,
+} from "../../features/auth/authSlice";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import { Link, useNavigate } from "react-router-dom";
-import Loading from "../components/Loading";
-import FetchBaseError from "../components/FetchBaseError";
-import { apiSlice } from "../app/api/apiSlice";
-import ReCaptcha from "../reCAPTCHA/ReCaptcha";
+import Loading from "../../components/Loading";
+import FetchBaseError from "../../components/FetchBaseError";
+import { apiSlice } from "../../app/api/apiSlice";
+import ReCaptcha from "../../components/authComponents/reCAPTCHA/ReCaptcha";
 
 /**
  *
@@ -52,9 +55,8 @@ function Login() {
       try {
         const data = await checkUserIsAuthenticated().unwrap();
         if (data && data.user && !ignore) {
-          console.log("user");
-          console.log(data);
-
+          // console.log("user");
+          // console.log(data);
           dispatch(setCredentials({ ...data }));
           navigate("/");
         }
@@ -118,6 +120,16 @@ function Login() {
               }}
             >
               Register Page
+            </Link>
+            . Forgot password? Click{" "}
+            <Link
+              to="/requestChangeForgottenPassword"
+              style={{
+                textDecoration: "none",
+                cursor: "pointer",
+              }}
+            >
+              here.
             </Link>
           </Form.Text>
         </Form.Group>

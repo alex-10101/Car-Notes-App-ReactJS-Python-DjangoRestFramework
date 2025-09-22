@@ -1,27 +1,23 @@
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import Container from "react-bootstrap/Container";
-import { useState } from "react";
-import { useAppDispatch } from "../app/hooks";
-import { removeCredentials } from "../features/auth/authSlice";
-import { apiSlice } from "../app/api/apiSlice";
-import FetchBaseError from "../components/FetchBaseError";
-import { useChangePasswordMutation } from "../features/auth/authApiSlice";
+import React, { useState } from "react";
+import { Button, Container, Form } from "react-bootstrap";
+import FetchBaseError from "../../components/FetchBaseError";
+import { Link, useParams } from "react-router-dom";
+import { useConfirmChangeForgottenPasswordMutation } from "../../features/auth/authApiSlice";
 
 /**
  *
- * @returns A page where a user can reset/change his/her password.
+ * @returns Form to reset a forgotten password. The user is redirected to this page from the email it received.
  */
-function ChangePassword() {
-  const [resetPassword, { error }] = useChangePasswordMutation();
-
-  const dispatch = useAppDispatch();
+function ConfirmChangeForgottenPassword() {
+  const [resetPassword, { error, data }] =
+    useConfirmChangeForgottenPasswordMutation();
 
   const [userInput, setUserInput] = useState({
-    oldPassword: "",
     newPassword: "",
     newPasswordConfirm: "",
   });
+
+  const { uid, token } = useParams();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
@@ -39,29 +35,20 @@ function ChangePassword() {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     e.preventDefault();
-    await resetPassword({
-      oldPassword: userInput.oldPassword,
-      newPassword: userInput.newPassword,
-      newPasswordConfirm: userInput.newPasswordConfirm,
-    }).unwrap();
-    dispatch(removeCredentials());
-    dispatch(apiSlice.util.resetApiState());
+    if (uid && token) {
+      await resetPassword({
+        uid: uid,
+        token: token,
+        newPassword: userInput.newPassword,
+        newPasswordConfirm: userInput.newPasswordConfirm,
+      }).unwrap();
+    }
   }
 
   return (
     <Container className="d-flex align-items-center flex-column my-4">
       <h1>Change Password</h1>
       <Form>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Old Password</Form.Label>
-          <Form.Control
-            name="oldPassword"
-            type="password"
-            placeholder="Enter old password"
-            onChange={handleChange}
-          />
-        </Form.Group>
-
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>New Password</Form.Label>
           <Form.Control
@@ -94,8 +81,14 @@ function ChangePassword() {
           Change Password
         </Button>
       </Form>
+
+      {data && (
+        <p>
+          {data}. Go to <Link to="/login">Login Page.</Link>
+        </p>
+      )}
     </Container>
   );
 }
 
-export default ChangePassword;
+export default ConfirmChangeForgottenPassword;

@@ -10,8 +10,8 @@ class CarSerializer(serializers.ModelSerializer):
 class CreateUpdateCarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ["brand", "motor", "model", "user"] # for views_copy.py
-        # fields = ["brand", "motor", "model"] # for views.py
+        # fields = ["brand", "motor", "model", "user"] # for views_copy.py
+        fields = ["brand", "motor", "model"] # for views.py
 
         # override the default error messages:
         extra_kwargs = {

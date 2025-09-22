@@ -1,18 +1,21 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./authPages/Login";
-import Register from "./authPages/Register";
+import Login from "./pages/authPages/Login";
+import Register from "./pages/authPages/Register";
 import Home from "./pages/Home";
 import EditCar from "./pages/EditCar";
 import Layout from "./pages/Layout";
 import NoPage from "./pages/NoPage";
-import PersistLogin from "./authComponents/PersistLogin";
-import { PrivateOutlet } from "./authComponents/PrivateOutlet";
 import AddCar from "./pages/AddCar";
-import DeleteAccount from "./authPages/DeleteAccount";
-import { PrivateOutletAdmin } from "./authComponents/PrivateOutletAdmin";
+import DeleteAccount from "./pages/authPages/DeleteAccount";
 import HomeAdmin from "./pages/HomeAdmin";
-import ChangePassword from "./authPages/ChangePassword";
+// import ChangeKnownPassword from "./pages/authPages/ChangeKnownPassword";
 import { useEffect } from "react";
+import ActivateAccount from "./pages/authPages/ActivateAccount";
+import PersistLogin from "./components/authComponents/PersistLogin";
+import { PrivateOutlet } from "./components/authComponents/PrivateOutlet";
+import { PrivateOutletAdmin } from "./components/authComponents/PrivateOutletAdmin";
+import RequestChangeForgottenPassword from "./pages/authPages/RequestChangeForgottenPassword";
+import ConfirmChangeForgottenPassword from "./pages/authPages/ConfirmChangeForgottenPassword";
 
 /**
  *
@@ -49,7 +52,7 @@ function App() {
               <Route path="edit/:id" element={<EditCar />} />
               <Route path="addCar" element={<AddCar />} />
               <Route path="deleteAccount" element={<DeleteAccount />} />
-              <Route path="changePassword" element={<ChangePassword />} />
+              {/* <Route path="changePassword" element={<ChangeKnownPassword />} /> */}
               <Route element={<PrivateOutletAdmin />}>
                 <Route path="admin" element={<HomeAdmin />} />
                 <Route path="admin/edit/:id" element={<EditCar />} />
@@ -57,7 +60,16 @@ function App() {
             </Route>
           </Route>
           <Route path="register" element={<Register />} />
+          <Route path="activate/:uid/:token/" element={<ActivateAccount />} />
           <Route path="login" element={<Login />} />
+          <Route
+            path="requestChangeForgottenPassword"
+            element={<RequestChangeForgottenPassword />}
+          />
+          <Route
+            path="confirmChangeForgottenPassword/:uid/:token"
+            element={<ConfirmChangeForgottenPassword />}
+          />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>
