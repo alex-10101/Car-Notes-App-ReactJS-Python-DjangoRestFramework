@@ -1,0 +1,18 @@
+Django URL rules:
+
+- All defined paths end with a trailing slash "/" (APPEND_SLASH=True).
+  Example: /post/
+ 
+- If the URL has path parameters, the slash comes AFTER the last parameter.
+  Example: /posts/5/
+
+- Query parameters (after "?") are NOT part of the path.
+  The trailing slash must appear BEFORE the "?".
+  Example: /posts/5/?page=2
+  Example: /posts/?page=2
+
+- Don't put a slash after query parameters.
+  Wrong: /posts/5/?page=2/
+  Correct: /posts/5/?page=2
+  Wrong: /posts/?page=2/
+  Correct: /posts/?page=2
