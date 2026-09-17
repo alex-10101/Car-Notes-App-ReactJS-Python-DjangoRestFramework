@@ -142,7 +142,8 @@ WSGI_APPLICATION = 'car_notes_api.wsgi.application'
 #     }
 # }
 
-# change default django database to postgresql (this requires to install psycopg2: pip3 install psycopg2)
+# change default django database to postgresql (this requires to install psycopg2: 
+# pip3 install psycopg2 or pip3 install psycopg2-binary)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
