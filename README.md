@@ -17,4 +17,4 @@
 
 - Unit Tests
 
-- Used separate Dockerfiles to containerize the frontend and backend, and Docker Compose to build and run the services together.
+- Containerized the application using Dockerfiles and Docker Compose.
