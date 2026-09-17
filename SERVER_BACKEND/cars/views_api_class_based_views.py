@@ -475,27 +475,37 @@ class ProductFilterOptionsView(APIView):
     """
     Class Based View for retrieving all distinct product brands and categories.
     """
-    permission_classes = (permissions.AllowAny,)
+    permission_classes=[permissions.IsAuthenticated]
 
     def get(self, request):
         """
-        Retrieve all distinct car brands and motors when the user makes a GET request to this endpoint.    
+        Retrieve all distinct car brands and motors.
+        Admins see all cars.
+        Regular users see only their own cars.
         """
+
+        queryset = Car.objects.all() \
+            if request.user.is_staff \
+            else Car.objects.filter(user=request.user)
+
         brands = (
-            Car.objects
+            queryset
             .values_list("brand", flat=True)
             .distinct()
             .order_by("brand")
         )
 
-        categories = (
-            Car.objects
+        motors = (
+            queryset
             .values_list("motor", flat=True)
             .distinct()
             .order_by("motor")
         )
 
-        return Response({
-            "brands": list(brands),
-            "motors": list(categories),
-        }, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "brands": list(brands),
+                "motors": list(motors),
+            },
+            status=status.HTTP_200_OK,
+        )

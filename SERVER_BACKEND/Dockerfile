@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application files in the working directory
 COPY . .
 
-# Expose the port the app runs on
+# Documents that the container listens on port 8000
 EXPOSE 8000
 
 # Run Django’s development server
@@ -35,7 +35,7 @@ EXPOSE 8000
 # "--bind 0.0.0.0:8000" tells gunicorn to listen on all container network interfaces on port 8000
 # (0.0.0.0 = accept connections from outside the container; required so Docker can forward host traffic to the container)
 # (forward traffic = Docker receives requests on the host machine port and redirects them to the container’s internal port)
-# (the internal port is the port on which the frontend app runs inside the container. this is specified in the CMD command and is 4173)
+# (the internal port is the port on which the backend app runs inside the container. this is specified in the CMD command and is 8000)
 # 8000 is the internal/container port — the Django app runs on this port inside the container
 # When using: docker run -p 8000:8000 --> Host:8000 --> Container:8000
 # Equivalent raw command: gunicorn car_notes_api.wsgi:application --bind 0.0.0.0:8000
